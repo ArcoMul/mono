@@ -8616,7 +8616,9 @@ compile_asm (MonoAotCompile *acfg)
 #elif defined(TARGET_AMD64) && defined(TARGET_MACH)
 #define LD_NAME "clang --shared"
 #elif defined(HOST_WIN32)
-#define LD_NAME "gcc -shared --dll"
+//#define LD_NAME "gcc -shared --dll"
+//#define LD_NAME "gcc -dynamiclib"
+#define LD_NAME "clang --shared"
 #elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
 #define LD_NAME "clang -m32 -dynamiclib"
 #endif
