@@ -9056,8 +9056,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 					acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
 				acfg->fp = fopen (acfg->tmpfname, "w+");
 			} else {
-				int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
-				acfg->fp = fdopen (i, "w+");
+				//int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
+				//acfg->fp = fdopen (i, "w+");
+				acfg->tmpfname = "mono.asm";
+				acfg->fp = fopen (acfg->tmpfname, "w+");
 			}
 		}
 		if (acfg->fp == 0) {
