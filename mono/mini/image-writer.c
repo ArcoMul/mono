@@ -1757,16 +1757,22 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 {
 	const char *stype;
 
+#if defined(WIN32)
+	stype = "32"; // TODO function=32, but what is object?
+#else
 	if (func)
 		stype = "function";
 	else
 		stype = "object";
+#endif
 
 	asm_writer_emit_unset_mode (acfg);
 #if defined(TARGET_ASM_APPLE)
 
 #elif defined(TARGET_ARM)
 	fprintf (acfg->fp, "\t.type %s,#%s\n", name, stype);
+#elif defined(WIN32)
+	fprintf (acfg->fp, "\t.def %s; .scl 2; .type %s; .endef\n", name, stype);
 #else
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #endif
@@ -1788,7 +1794,11 @@ asm_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const cha
 	asm_writer_emit_unset_mode (acfg);
 
 #ifndef TARGET_ASM_APPLE
+#if defined(WIN32)
+	// Don't emit locals for PE-COFF
+#else
 	fprintf (acfg->fp, "\t.local %s\n", name);
+#endif
 #endif
 
 	asm_writer_emit_symbol_type (acfg, name, func);
@@ -1800,7 +1810,11 @@ asm_writer_emit_symbol_size (MonoImageWriter *acfg, const char *name, const char
 	asm_writer_emit_unset_mode (acfg);
 
 #ifndef TARGET_ASM_APPLE
+#if defined(WIN32)
+	fprintf (acfg->fp, "\t.def %s; .scl 2; .size %s-%s; .endef\n", name, end_label, name);
+#else
 	fprintf (acfg->fp, "\t.size %s,%s-%s\n", name, end_label, name);
+#endif
 #endif
 }
 
